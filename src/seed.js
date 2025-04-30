@@ -6,17 +6,14 @@ const Product  = require('./models/Product');
 const Order    = require('./models/Order');
 
 async function seed() {
-  // Connect to MongoDB
   await mongoose.connect(process.env.MONGO_URI);
 
-  // Clear existing data
   await Promise.all([
     Customer.deleteMany({}),
     Product.deleteMany({}),
     Order.deleteMany({})
   ]);
 
-  // Import customers from CSV
   const customers = await csv().fromFile('data/customers.csv');
   for (let c of customers) {
     await Customer.create({
@@ -29,7 +26,6 @@ async function seed() {
     });
   }
 
-  // Import products from CSV
   const products = await csv().fromFile('data/products.csv');
   for (let p of products) {
     await Product.create({
@@ -41,7 +37,6 @@ async function seed() {
     });
   }
 
-  // Import orders from CSV (transform Python-style list to valid JSON)
   const orders = await csv().fromFile('data/orders.csv');
   for (let o of orders) {
     const raw   = o.products.replace(/'/g, '"');
